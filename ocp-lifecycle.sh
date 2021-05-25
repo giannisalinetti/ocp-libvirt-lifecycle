@@ -43,6 +43,9 @@ cluster_shutdown () {
     first_master=$(oc get nodes -l node-role.kubernetes.io/master -o jsonpath='{.items[0].status.addresses[0].address}')
 
     # Run backup script on master
+    if [ -d $local_etcd_backups ]; then
+        mkdir $local_etcd_backups
+    fi
     ssh core@$first_master 'sudo /usr/local/bin/cluster-backup.sh /tmp/etcd-backups && sudo chown -R core:core /tmp/etcd-backups/'
     if [ $? -ne 0 ]; then
         echo "$date_fmt ==== Etcd backup failed, please backup before continuing  ===="
