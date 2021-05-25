@@ -12,7 +12,7 @@
 date_fmt=$(date '+%h %d %H:%M:%S')
 local_etcd_backups='/root/etcd-backups/'
 
-if [ $# == 0 ]; then 
+if [ $# -eq 0 ]; then 
     echo "Error: an action argument is mandatory. Accepted values: start,shutdown"
     echo "Usage: ocp-lifecycle.sh start|stop"
     exit 1
@@ -23,6 +23,14 @@ if [ $1 == '-h' ] || [ $1 == '--help' ]; then
     echo "Usage: ocp-lifecycle.sh start|stop"
     exit 0
 fi
+
+# Check root privileges
+superuser_check () {
+    if [ $UID -ne 0 ]; then
+        echo "Error: superuser privileges required."
+        exit 1
+    fi
+}
 
 # Check and download oc CLI
 cli_check () {
@@ -148,7 +156,11 @@ cluster_bootstrap () {
     oc get nodes -o wide
 }
 
+# Run checks
+superuser_check
 cli_check
+
+# Run actions
 if [ $1 == 'start' ]; then
     cluster_bootstrap
 elif [ $1 == 'stop' ]; then
