@@ -83,7 +83,7 @@ cluster_bootstrap () {
     sleep 600
 
     # Authenticate with cluster-admin privileges
-    oc login -u ${username} -p ${password} --insecure-skip-tls-verify ${ednpoint} > /dev/null 2>&1
+    oc login -u ${username} -p ${password} --insecure-skip-tls-verify ${endpoint} > /dev/null 2>&1
 
     master_nodes=$(oc get nodes -l node-role.kubernetes.io/master -o jsonpath='{.items[*].metadata.name}')
     worker_nodes=$(oc get nodes -l node-role.kubernetes.io/worker -o jsonpath='{.items[*].metadata.name}')
